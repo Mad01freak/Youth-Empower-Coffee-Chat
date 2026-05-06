@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>不可替代性 | The Unreplaceable You</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&family=Inter:wght@100;300;400;600&display=swap');
+        
+        :root {
+            --primary-bg: #0a0a0a;
+            --accent-white: #f1f1f1;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans TC', system-ui, -apple-system, sans-serif;
+            background: var(--primary-bg);
+            color: var(--accent-white);
+            overflow-x: hidden; 
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .fluid-bg {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+            z-index: -1;
+            animation: fluidMove 20s ease-in-out infinite alternate;
+        }
+        
+        @keyframes fluidMove {
+            0% { transform: scale(1) translate(0, 0); }
+            100% { transform: scale(1.1) translate(2%, 2%); }
+        }
+        
+        .page {
+            display: none;
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            transform: translateY(20px);
+        }
+        
+        .page.active {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .opt-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .opt-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateX(8px);
+        }
+
+        .result-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        #ctaModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        #ctaModal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .ai-loading-sparkle {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .required-star {
+            color: #ef4444;
+            margin-left: 4px;
+        }
+
+        /* 隱藏捲軸但保留功能 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="relative">
+    <div class="fluid-bg"></div>
+
+    <div id="app" class="max-w-lg mx-auto min-h-screen flex flex-col relative z-10 pb-10">
+        
+        <!-- Page 1: 開場 (Intro) -->
+        <div id="page1" class="page active flex-1 flex flex-col justify-center items-center px-8 text-center">
+            <div class="mb-16 mt-20">
+                <span class="text-[10px] tracking-[0.5em] opacity-30 uppercase mb-4 block">Youth Empower – Coffee Chat</span>
+                <h1 class="text-4xl font-extralight tracking-[0.3em] mb-2 text-white">不可替代性</h1>
+                <p class="text-xs text-gray-500 tracking-widest uppercase">The Unreplaceable You</p>
+            </div>
+            <div class="space-y-4 mb-16">
+                <p class="text-2xl font-light leading-relaxed">
+                    當 AI 幾秒就做到你努力咗十年嘅嘢，<br>
+                    <span class="font-medium">你仲剩下啲乜嘢？</span>
+                </p>
+                <p class="text-sm text-gray-500 italic font-light">
+                    When AI does in seconds what you've practiced for a decade,<br>
+                    what remains of you?
+                </p>
+            </div>
+            <button onclick="goToPage(2)" 
+                    class="group relative px-12 py-4 border border-white/30 rounded-full overflow-hidden transition-all duration-500 hover:border-white">
+                <span class="relative z-10 group-hover:text-black transition-colors duration-500 tracking-[0.2em] text-xs">開始探索 START EXPLORING</span>
+                <div class="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+            </button>
+        </div>
+
+        <!-- Page 2: 輸入代號 (Identify) -->
+        <div id="page2" class="page flex-1 flex flex-col justify-center px-10">
+            <div class="text-center mb-16">
+                <p class="text-sm tracking-widest text-gray-500 mb-8 font-light uppercase">Identify Yourself</p>
+                <p class="text-xl font-light mb-2">為這段旅程取一個代號<span class="required-star">*</span></p>
+                <p class="text-xs text-gray-600 mb-8">Give this journey a codename<span class="required-star">*</span></p>
+                <input id="nickname" type="text" placeholder="Name / Codename..." 
+                       class="w-full bg-transparent border-b border-white/20 py-4 text-2xl text-center focus:outline-none focus:border-white transition-colors placeholder-gray-800 font-light">
+                <p id="nameError" class="text-[10px] text-red-500 mt-4 opacity-0 transition-opacity">此項為必填 / This field is required</p>
+            </div>
+            <button onclick="validateAndStart()" 
+                    class="w-full py-5 border border-white/20 rounded-xl hover:bg-white hover:text-black transition-all duration-500 tracking-[0.2em] font-light text-sm uppercase">
+                確認進入測驗 <span class="block text-[9px] opacity-60">Confirm & Enter</span>
+            </button>
+        </div>
+
+        <!-- 測驗頁面 (Quiz) - 5 Questions -->
+        <div id="quizPage" class="page flex-1 flex flex-col px-8 py-20">
+            <div class="mb-12">
+                <div class="h-[1px] bg-white/10 rounded-full overflow-hidden">
+                    <div id="progress" class="h-full bg-white w-0 transition-all duration-700 ease-out"></div>
+                </div>
+                <div class="flex justify-between items-center mt-4">
+                    <span id="scenarioTag" class="text-[10px] tracking-widest opacity-30 uppercase font-light">Scenario</span>
+                    <p class="text-[10px] text-gray-500 tracking-tighter font-light"><span id="questionNum">1</span> / 5</p>
+                </div>
+            </div>
+            
+            <div id="questionContainer" class="mb-10 min-h-[140px]">
+                <h2 id="questionText" class="text-2xl font-light leading-snug mb-2"></h2>
+                <p id="questionTextEn" class="text-xs text-gray-500 italic font-light"></p>
+            </div>
+            
+            <div id="options" class="space-y-4 w-full"></div>
+        </div>
+
+        <!-- 加載分析頁面 (Loading) -->
+        <div id="loadingPage" class="page flex-1 flex flex-col justify-center items-center px-8 text-center">
+            <div class="ai-loading-sparkle text-4xl mb-6">✨</div>
+            <p class="text-xl font-light tracking-widest animate-pulse mb-2">正在剖析你的靈魂座標...</p>
+            <p class="text-sm text-gray-500 mb-4 italic">Analyzing your soul coordinates via Gemini...</p>
+            <p class="text-[10px] text-gray-600 uppercase tracking-[0.2em]">Neural patterns processing</p>
+        </div>
+
+        <!-- 結果頁 (Result) -->
+        <div id="resultPage" class="page flex-1 flex flex-col justify-start px-8 pt-10 overflow-y-auto no-scrollbar">
+            <div id="resultCard" class="result-card rounded-[2rem] p-8 text-center relative overflow-hidden mb-8">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                
+                <p id="resGreeting" class="text-[10px] tracking-[0.3em] text-gray-500 mb-4 uppercase"></p>
+                <div class="mb-6">
+                    <h2 id="roleTitle" class="text-4xl font-bold tracking-tighter"></h2>
+                    <p id="roleTitleEn" class="text-[10px] text-gray-500 uppercase tracking-widest mt-1"></p>
+                </div>
+                
+                <div class="mb-8 text-left bg-white/5 p-5 rounded-2xl border border-white/5">
+                    <div class="flex justify-between items-center mb-3">
+                        <p class="text-[10px] text-blue-400 uppercase tracking-widest font-bold">✨ Gemini Analysis</p>
+                        <button onclick="playAnalysisVoice()" class="text-gray-500 hover:text-white transition-colors">
+                            <i class="fa-solid fa-volume-high text-xs"></i>
+                        </button>
+                    </div>
+                    <div id="aiInsight" class="text-sm text-gray-300 leading-relaxed font-light italic whitespace-pre-line"></div>
+                </div>
+
+                <div id="roleQuote" class="py-6 border-t border-white/5 text-lg font-medium leading-relaxed mb-8 text-gray-200"></div>
+                
+                <button onclick="handleShareClick()" 
+                        class="w-full py-4 bg-white text-black rounded-xl font-bold hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-share-nodes text-xs"></i>
+                    <span class="text-xs uppercase tracking-wider font-black">分享我的座標 Share Result</span>
+                </button>
+            </div>
+            
+            <div class="text-center pb-20">
+                <p class="text-[10px] tracking-[0.4em] text-gray-600 mb-6 uppercase">Save the date</p>
+                <div class="inline-block px-8 py-5 border border-white/10 rounded-3xl bg-white/[0.03] backdrop-blur-md">
+                    <p class="text-sm font-bold mb-1 tracking-widest text-white">5 月 12 日 • 5:00 PM</p>
+                    <p class="text-xs text-gray-400 font-light mb-2">Nestko 活動現場 (BGCA)</p>
+                    <div class="h-[1px] w-8 bg-white/20 mx-auto mb-2"></div>
+                    <p class="text-[10px] text-gray-500 font-light italic uppercase">Looking forward to finding your coordinates with you.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 懸念導流彈窗 -->
+    <div id="ctaModal">
+        <div class="max-w-xs w-full bg-zinc-900 border border-white/10 p-8 rounded-[2rem] text-center shadow-2xl">
+            <p id="modalTagline" class="text-white text-lg font-medium mb-2 leading-relaxed"></p>
+            <p id="modalTaglineEn" class="text-gray-500 text-[10px] uppercase mb-6 italic"></p>
+            <p class="text-gray-400 text-xs mb-8 leading-relaxed">
+                想知道其他人格對未來有咩唔同諗法？<br>
+                現場將有專屬席位供同路人對接。<br>
+                <span class="text-[10px] opacity-60">Curious about other perspectives? Reserved seats await for cross-persona dialogue.</span>
+            </p>
+            <div class="space-y-3">
+                <a href="https://www.instagram.com/nestko.go/" target="_blank" class="block w-full py-3 bg-white text-black rounded-full text-sm font-bold tracking-wider uppercase">DM 預留席位 (Reserve)</a>
+                <button onclick="closeModalAndShare()" class="block w-full py-3 text-gray-500 text-[10px] tracking-widest uppercase">暫時跳過 Skip for now</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="bgm" loop>
+        <source src="https://freesound.org/data/previews/612/612095_5674468-lq.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const apiKey = ""; 
+        let currentIdx = 0;
+        let answers = [];
+        let userNickname = "";
+        let currentPersonaTitle = "";
+        let currentPersonaTitleEn = "";
+        let aiFullAnalysis = "";
+
+        // 5 Questions as requested
+        const questions = [
+            {
+                q: "當你見到一幅由 AI 創作、且比人類畫得更精緻嘅畫作時，你第一反應係？",
+                qEn: "When you see an AI-generated artwork that's more exquisite than a human's, your first reaction is?",
+                tag: "Scenario 01: Perception",
+                options: [
+                    { text: "有種莫名嘅空洞感，覺得背後冇靈魂。", textEn: "A sense of emptiness; it feels soulless.", score: "A", detail: "Emotional Guardian" },
+                    { text: "覺得好正！想即刻學點樣用 AI 畫出更多。", textEn: "Amazing! I want to learn how to use AI to create more.", score: "B", detail: "Tool Master" },
+                    { text: "讚嘆科技進步，同時擔心人類畫家嘅未來。", textEn: "Marvel at the progress, yet worry about the future of artists.", score: "C", detail: "Wandering Explorer" }
+                ]
+            },
+            {
+                q: "如果未來可以喺腦部植入 AI 晶片提升效率，但可能會令你失去部分直覺，你會...？",
+                qEn: "If you could implant an AI chip to boost efficiency but might lose some intuition, would you...?",
+                tag: "Scenario 02: Decision",
+                options: [
+                    { text: "堅決拒絕。失去直覺，我就唔再係「我」。", textEn: "Refuse. Without intuition, I’m no longer \"me\".", score: "A", detail: "Self Identity Keeper" },
+                    { text: "接受。喺呢個時代，效率同智力先係生存關鍵。", textEn: "Accept. Efficiency and intelligence are keys to survival now.", score: "B", detail: "Efficiency Seeker" },
+                    { text: "睇下身邊嘅人點做先決定。", textEn: "Wait and see what others do before deciding.", score: "C", detail: "Social Observer" }
+                ]
+            },
+            {
+                q: "面對 AI 幾秒就寫完一份報告，你覺得自己最不可被取代嘅價值係？",
+                qEn: "When AI completes a report in seconds, what do you think is your most irreplaceable value?",
+                tag: "Scenario 03: Professional",
+                options: [
+                    { text: "對事物嘅情感投入同獨特嘅個人體會。", textEn: "Emotional investment and unique personal experiences.", score: "A", detail: "Warmth Creator" },
+                    { text: "懂得點樣引導 AI 產出正確結果嘅判斷力。", textEn: "The judgment to guide AI toward the right outcomes.", score: "B", detail: "Strategic Commander" },
+                    { text: "能夠提出 AI 諗唔到嘅「點解」同好奇心。", textEn: "The curiosity to ask \"Why\" in ways AI can't imagine.", score: "C", detail: "Human Curiosity" }
+                ]
+            },
+            {
+                q: "當你感到未來嘅不確定性時，你最傾向透過邊種方式搵返平靜？",
+                qEn: "When facing future uncertainty, how do you most prefer to find peace?",
+                tag: "Scenario 04: Social",
+                options: [
+                    { text: "搵朋友面對面傾計，感受人與人之間嘅溫度。", textEn: "Chat with friends face-to-face; feel the human warmth.", score: "A", detail: "Community Soul" },
+                    { text: "獨自鑽研新技能，令自己變得更強大。", textEn: "Study new skills alone to make myself stronger.", score: "B", detail: "Skill Master" },
+                    { text: "喺網絡或社群觀察大家嘅諗法，尋找座標。", textEn: "Observe thoughts in communities to find my coordinates.", score: "C", detail: "Data Collector" }
+                ]
+            },
+            {
+                q: "你心目中理想嘅未來，係「科技決定一切」定係「人類引導科技」？",
+                qEn: "In your ideal future, does technology decide everything, or do humans guide technology?",
+                tag: "Scenario 05: Vision",
+                options: [
+                    { text: "科技應退後，將主導權還畀人類嘅感性。", textEn: "Tech should step back, giving autonomy to human sensibility.", score: "A", detail: "Humanist" },
+                    { text: "人類應該全面進步，成為駕馭科技嘅職人。", textEn: "Humans should evolve to become tech-mastering artisans.", score: "B", detail: "Digital Pioneer" },
+                    { text: "兩者平衡，共同探索未知嘅領域。", textEn: "A balance of both, exploring unknown territories together.", score: "C", detail: "Co-existence Advocate" }
+                ]
+            }
+        ];
+
+        const baseResults = {
+            A: { title: "靈魂守護者", titleEn: "Soul Guardian", quote: "「在 0 與 1 之間，我們選擇留住那一份『心』。」", quoteEn: "\"Between 0 and 1, we choose to keep the 'heart'.\"" },
+            B: { title: "數位適應者", titleEn: "Digital Adapter", quote: "「別跑得太快，讓靈魂跟上你的速度。」", quoteEn: "\"Don't run too fast; let your soul catch up.\"" },
+            C: { title: "未來觀望家", titleEn: "Future Spectator", quote: "「你的觀點，就是定義未來最關鍵的一筆數據。」", quoteEn: "\"Your perspective is the most critical data defining the future.\"" }
+        };
+
+        function showDirect(id) {
+            document.querySelectorAll('.page').forEach(p => {
+                p.classList.remove('active');
+                p.style.display = 'none';
+            });
+            const target = document.getElementById(id);
+            target.style.display = 'flex';
+            setTimeout(() => target.classList.add('active'), 50);
+        }
+
+        function goToPage(pageNum) {
+            if(pageNum === 1) showDirect('page1');
+            else if(pageNum === 2) showDirect('page2');
+        }
+
+        function validateAndStart() {
+            const input = document.getElementById('nickname');
+            const error = document.getElementById('nameError');
+            const value = input.value.trim();
+            if (!value) {
+                error.classList.remove('opacity-0');
+                input.classList.add('border-red-500');
+                return;
+            }
+            userNickname = value;
+            error.classList.add('opacity-0');
+            input.classList.remove('border-red-500');
+            startQuiz();
+        }
+
+        function startQuiz() {
+            answers = [];
+            currentIdx = 0;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            showDirect('quizPage');
+            document.getElementById('questionNum').textContent = currentIdx + 1;
+            document.getElementById('scenarioTag').textContent = questions[currentIdx].tag;
+            document.getElementById('progress').style.width = `${((currentIdx + 1) / 5) * 100}%`;
+            
+            const q = questions[currentIdx];
+            document.getElementById('questionText').textContent = q.q;
+            document.getElementById('questionTextEn').textContent = q.qEn;
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            
+            q.options.forEach((opt) => {
+                const btn = document.createElement('button');
+                btn.className = "opt-btn w-full text-left p-6 rounded-2xl";
+                btn.innerHTML = `
+                    <div class="text-sm font-light leading-relaxed mb-1">${opt.text}</div>
+                    <div class="text-[10px] text-gray-500 italic leading-tight">${opt.textEn}</div>
+                `;
+                btn.onclick = () => selectAnswer(opt);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(opt) {
+            answers.push(opt);
+            if (currentIdx < 4) {
+                currentIdx++;
+                showQuestion();
+            } else {
+                generateAIAnalysis();
+            }
+        }
+
+        async function generateAIAnalysis() {
+            showDirect('loadingPage');
+            const count = {A:0, B:0, C:0};
+            answers.forEach(a => count[a.score]++);
+            let maxKey = 'A';
+            if (count.B >= count.A && count.B >= count.C) maxKey = 'B';
+            else if (count.C >= count.A && count.C >= count.B) maxKey = 'C';
+            else maxKey = 'A';
+            
+            const resData = baseResults[maxKey];
+            currentPersonaTitle = resData.title;
+            currentPersonaTitleEn = resData.titleEn;
+
+            const prompt = `You are a philosophical psychological analyst. User codename: "${userNickname}". Traits selected: ${answers.map(a => a.detail).join(', ')}. Primary persona: "${resData.title} (${resData.titleEn})". Task: Write a "Soul Depth Analysis" (approx 120 words). Format: Bilingual (Traditional Chinese followed by English). Tone: Gentle, deep, slightly melancholic but hopeful. Focus on their specific "unreplaceable" trait in the AI era. Output directly without intro.`;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                const data = await response.json();
+                aiFullAnalysis = data.candidates?.[0]?.content?.parts?.[0]?.text || "在數據的洪流中，你是一道不被定義的光。\nIn the torrent of data, you are an undefined light.";
+            } catch (error) {
+                aiFullAnalysis = "連結靈魂座標時發生波動。\nSoul connection fluctuates.";
+            }
+
+            document.getElementById('resGreeting').textContent = `Dear ${userNickname}`;
+            document.getElementById('roleTitle').textContent = `你好，${resData.title}`;
+            document.getElementById('roleTitleEn').textContent = resData.titleEn;
+            document.getElementById('aiInsight').textContent = aiFullAnalysis;
+            document.getElementById('roleQuote').innerHTML = `
+                <div class="mb-2">${resData.quote}</div>
+                <div class="text-xs opacity-50 italic">${resData.quoteEn}</div>
+            `;
+            showDirect('resultPage');
+        }
+
+        async function playAnalysisVoice() {
+            const text = `Hello ${userNickname}. ${aiFullAnalysis}`;
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: `Read this analysis clearly: ${text}` }] }],
+                        generationConfig: {
+                            responseModalities: ["AUDIO"],
+                            speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } }
+                        }
+                    })
+                });
+                const result = await response.json();
+                const pcmData = result.candidates[0].content.parts[0].inlineData.data;
+                const audioBlob = pcmToWav(pcmData, 24000); 
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const audio = new Audio(audioUrl);
+                audio.play();
+            } catch (e) { console.error("TTS Failed", e); }
+        }
+
+        function pcmToWav(base64Pcm, sampleRate) {
+            const pcmBuffer = Uint8Array.from(atob(base64Pcm), c => c.charCodeAt(0)).buffer;
+            const wavHeader = new ArrayBuffer(44);
+            const view = new DataView(wavHeader);
+            const writeString = (offset, string) => { for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i)); };
+            writeString(0, 'RIFF');
+            view.setUint32(4, 32 + pcmBuffer.byteLength, true);
+            writeString(8, 'WAVE');
+            writeString(12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, 1, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            writeString(36, 'data');
+            view.setUint32(40, pcmBuffer.byteLength, true);
+            return new Blob([wavHeader, pcmBuffer], { type: 'audio/wav' });
+        }
+
+        function handleShareClick() {
+            const modal = document.getElementById('ctaModal');
+            const tagline = document.getElementById('modalTagline');
+            const taglineEn = document.getElementById('modalTaglineEn');
+            tagline.innerHTML = `${currentPersonaTitle}，你嘅座標已經被標記。📍`;
+            taglineEn.innerHTML = `${currentPersonaTitleEn}, your coordinates are marked.`;
+            modal.classList.add('active');
+        }
+
+        function closeModalAndShare() {
+            document.getElementById('ctaModal').classList.remove('active');
+            setTimeout(shareResult, 300);
+        }
+
+        function shareResult() {
+            const shareText = `I am "${currentPersonaTitle} (${currentPersonaTitleEn})" in "The Unreplaceable You" quiz.\n#Nestko #Unreplaceable`;
+            if (navigator.share) {
+                navigator.share({ title: 'Unreplaceable You', text: shareText, url: window.location.href }).catch(() => {});
+            } else {
+                const el = document.createElement('textarea');
+                el.value = shareText;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+                alert("已複製到剪貼簿！Copied to clipboard!");
+            }
+        }
+
+        document.addEventListener('click', () => {
+            const audio = document.getElementById('bgm');
+            if (audio.paused) audio.play().catch(() => {});
+        }, { once: true });
+
+        document.getElementById('nickname').addEventListener('input', function() {
+            if (this.value.trim()) {
+                document.getElementById('nameError').classList.add('opacity-0');
+                this.classList.remove('border-red-500');
+            }
+        });
+    </script>
+</body>
+</html>
